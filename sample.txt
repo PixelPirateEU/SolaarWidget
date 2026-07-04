@@ -1,0 +1,22 @@
+#!/bin/bash
+
+  solaar show > solaar_output.txt 2>&1
+  strings solaar_output.txt | awk '
+    /Codename/ { codename = $0; battery = "" }
+    /Battery:/ { battery = $0 }
+    /^$/ || /^Lightspeed/ || /^Device path/ {
+      if (codename && battery) {
+        print codename;
+        print battery;
+        codename = "";
+        battery = "";
+      }
+    }
+    END {
+      if (codename && battery) {
+        print codename;
+        print battery;
+      }
+    }
+  '
+  rm solaar_output.txt
