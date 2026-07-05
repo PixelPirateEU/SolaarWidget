@@ -2,6 +2,8 @@
 
 [English](#english) | [Deutsch](#deutsch)
 
+![Solaar Battery Widget Screenshot](ScreenshotSolaarWidget.png)
+
 ---
 
 ## English
