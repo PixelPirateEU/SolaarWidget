@@ -53,12 +53,9 @@ PlasmoidItem {
             anchors.centerIn: parent
             width: Math.min(parent.width, parent.height) * 0.8
             height: width
-            source: {
-                if (devicesModel.count === 0 || root.lowestBattery < 0) {
-                    return "preferences-desktop-keyboard-symbolic";
-                }
-                return getBatteryIcon(root.lowestBattery, root.lowestBatteryCharging);
-            }
+            source: getBatteryIcon(root.lowestBattery, false)
+            isMask: true
+            color: (root.lowestBattery >= 0 && root.lowestBattery < 20) ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.textColor
         }
         
         MouseArea {
