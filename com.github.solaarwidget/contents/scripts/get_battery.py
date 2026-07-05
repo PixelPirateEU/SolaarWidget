@@ -37,24 +37,42 @@ def parse_solaar_show(text):
     return devices
 
 def main():
-    sample_file = "/home/vmtests/SolaarWidget/sample_output.txt"
-    mock_file = "/home/vmtests/SolaarWidget/mock_solaar.txt"
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    repo_dir = os.path.abspath(os.path.join(script_dir, "..", "..", ".."))
+    
+    sample_paths = [
+        "/home/vmtests/SolaarWidget/sample_output.txt",
+        os.path.join(repo_dir, "sample_output.txt"),
+        os.path.join(os.getcwd(), "sample_output.txt")
+    ]
+    mock_paths = [
+        "/home/vmtests/SolaarWidget/mock_solaar.txt",
+        os.path.join(repo_dir, "mock_solaar.txt"),
+        os.path.join(os.getcwd(), "mock_solaar.txt")
+    ]
     
     text = ""
     error_msg = None
     
-    if os.path.exists(sample_file):
-        try:
-            with open(sample_file, 'r') as f:
-                text = f.read()
-        except Exception as e:
-            error_msg = f"Fehler beim Lesen der sample_output.txt: {str(e)}"
-    elif os.path.exists(mock_file):
-        try:
-            with open(mock_file, 'r') as f:
-                text = f.read()
-        except Exception as e:
-            error_msg = f"Fehler beim Lesen der Mock-Datei: {str(e)}"
+    # Try finding and reading sample or mock files first (useful for development)
+    for sample_path in sample_paths:
+        if os.path.exists(sample_path):
+            try:
+                with open(sample_path, 'r') as f:
+                    text = f.read()
+                break
+            except Exception as e:
+                error_msg = f"Fehler beim Lesen der sample_output.txt ({sample_path}): {str(e)}"
+                
+    if not text and not error_msg:
+        for mock_path in mock_paths:
+            if os.path.exists(mock_path):
+                try:
+                    with open(mock_path, 'r') as f:
+                        text = f.read()
+                    break
+                except Exception as e:
+                    error_msg = f"Fehler beim Lesen der Mock-Datei ({mock_path}): {str(e)}"
             
     if not text and not error_msg:
         try:

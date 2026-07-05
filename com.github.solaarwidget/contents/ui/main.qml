@@ -49,26 +49,25 @@ PlasmoidItem {
         implicitWidth: Kirigami.Units.gridUnit * 2
         implicitHeight: Kirigami.Units.gridUnit * 2
         
-        RowLayout {
-            anchors.fill: parent
-            spacing: Kirigami.Units.smallSpacing
-            
-            Kirigami.Icon {
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                Layout.preferredWidth: parent.width * 0.8
-                Layout.preferredHeight: parent.height * 0.8
-                source: {
-                    if (devicesModel.count === 0 || root.lowestBattery < 0) {
-                        return "preferences-desktop-keyboard-symbolic";
-                    }
-                    return getBatteryIcon(root.lowestBattery, root.lowestBatteryCharging);
+        Kirigami.Icon {
+            anchors.centerIn: parent
+            width: Math.min(parent.width, parent.height) * 0.8
+            height: width
+            source: {
+                if (devicesModel.count === 0 || root.lowestBattery < 0) {
+                    return "preferences-desktop-keyboard-symbolic";
                 }
+                return getBatteryIcon(root.lowestBattery, root.lowestBatteryCharging);
             }
         }
         
         MouseArea {
             anchors.fill: parent
-            onClicked: plasmoid.expanded = !plasmoid.expanded
+            onClicked: {
+                console.log("Compact representation clicked, current expanded:", root.expanded)
+                root.expanded = !root.expanded
+                console.log("New expanded state:", root.expanded)
+            }
         }
     }
     
@@ -412,7 +411,9 @@ PlasmoidItem {
             }
         }
         
-        if (lowerStr.includes("charging") || lowerStr.includes("recharging")) {
+        if (lowerStr.includes("discharging")) {
+            isCharging = false;
+        } else if (lowerStr.includes("charging") || lowerStr.includes("recharging")) {
             isCharging = true;
         }
         
