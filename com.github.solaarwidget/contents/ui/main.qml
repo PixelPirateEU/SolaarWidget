@@ -14,6 +14,7 @@ PlasmoidItem {
     property bool isLoading: false
     property string errorMessage: ""
     property string lastUpdatedTime: "Nie"
+    property bool lowBatteryAlertPlayed: false
     
     // ListModel for devices
     ListModel {
@@ -291,6 +292,9 @@ PlasmoidItem {
         
         onNewData: (sourceName, data) => {
             disconnectSource(sourceName);
+            if (!sourceName.includes("get_battery.py")) {
+                return;
+            }
             root.isLoading = false;
             let stdout = data["stdout"];
             let stderr = data["stderr"];
@@ -450,6 +454,22 @@ PlasmoidItem {
             return "battery-charging-" + percentageStr;
         } else {
             return "battery-" + percentageStr;
+        }
+    }
+    
+    function playWarningSound() {
+        let soundCmd = "canberra-gtk-play -i dialog-warning || pw-play /usr/share/sounds/freedesktop/stereo/dialog-warning.oga || paplay /usr/share/sounds/freedesktop/stereo/dialog-warning.oga";
+        executable.connectSource(soundCmd);
+    }
+    
+    onLowestBatteryChanged: {
+        if (root.lowestBattery >= 0 && root.lowestBattery < 20) {
+            if (!root.lowBatteryAlertPlayed) {
+                playWarningSound();
+                root.lowBatteryAlertPlayed = true;
+            }
+        } else {
+            root.lowBatteryAlertPlayed = false;
         }
     }
 }
