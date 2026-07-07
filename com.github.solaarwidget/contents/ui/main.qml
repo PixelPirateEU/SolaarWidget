@@ -16,6 +16,7 @@ PlasmoidItem {
     property string lastUpdatedTime: "Nie"
     property bool hasUnchargedLowBattery: false
     property int alertRepeatInterval: 300000 // 5 minutes in milliseconds
+    property var fullyChargedAlertedDevices: ({})
     
     // ListModel for devices
     ListModel {
@@ -327,6 +328,9 @@ PlasmoidItem {
                 let hasDevices = false;
                 let unchargedLow = false;
                 
+                let alertedDevices = root.fullyChargedAlertedDevices;
+                let currentFullyChargedCharging = {};
+                
                 for (let dev of devices) {
                     let parsed = parseBatteryString(dev.battery);
                     devicesModel.append({
@@ -346,8 +350,23 @@ PlasmoidItem {
                         if (parsed.percentage < 20 && !parsed.isCharging) {
                             unchargedLow = true;
                         }
+                        if (parsed.percentage === 100 && parsed.isCharging) {
+                            currentFullyChargedCharging[dev.name] = true;
+                            if (!alertedDevices[dev.name]) {
+                                playFullBatterySound();
+                                alertedDevices[dev.name] = true;
+                            }
+                        }
                     }
                 }
+                
+                // Clean up devices that are no longer 100% and charging
+                for (let name in alertedDevices) {
+                    if (!currentFullyChargedCharging[name]) {
+                        delete alertedDevices[name];
+                    }
+                }
+                root.fullyChargedAlertedDevices = alertedDevices;
                 
                 root.lowestBattery = hasDevices ? minBattery : -1;
                 root.lowestBatteryCharging = hasDevices ? minBatteryCharging : false;
@@ -465,6 +484,11 @@ PlasmoidItem {
     
     function playWarningSound() {
         let soundCmd = "pw-play /usr/share/sounds/ocean/stereo/battery-low.oga || paplay /usr/share/sounds/ocean/stereo/battery-low.oga || canberra-gtk-play -f /usr/share/sounds/ocean/stereo/battery-low.oga || canberra-gtk-play -i dialog-warning || pw-play /usr/share/sounds/freedesktop/stereo/dialog-warning.oga || paplay /usr/share/sounds/freedesktop/stereo/dialog-warning.oga";
+        executable.connectSource(soundCmd);
+    }
+    
+    function playFullBatterySound() {
+        let soundCmd = "pw-play /usr/share/sounds/ocean/stereo/battery-full.oga || paplay /usr/share/sounds/ocean/stereo/battery-full.oga || canberra-gtk-play -f /usr/share/sounds/ocean/stereo/battery-full.oga";
         executable.connectSource(soundCmd);
     }
     
