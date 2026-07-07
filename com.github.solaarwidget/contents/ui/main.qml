@@ -14,7 +14,8 @@ PlasmoidItem {
     property bool isLoading: false
     property string errorMessage: ""
     property string lastUpdatedTime: "Nie"
-    property bool lowBatteryAlertPlayed: false
+    property bool hasUnchargedLowBattery: false
+    property int alertRepeatInterval: 300000 // 5 minutes in milliseconds
     
     // ListModel for devices
     ListModel {
@@ -324,6 +325,7 @@ PlasmoidItem {
                 let minBattery = 100;
                 let minBatteryCharging = false;
                 let hasDevices = false;
+                let unchargedLow = false;
                 
                 for (let dev of devices) {
                     let parsed = parseBatteryString(dev.battery);
@@ -341,11 +343,15 @@ PlasmoidItem {
                             minBattery = parsed.percentage;
                             minBatteryCharging = parsed.isCharging;
                         }
+                        if (parsed.percentage < 20 && !parsed.isCharging) {
+                            unchargedLow = true;
+                        }
                     }
                 }
                 
                 root.lowestBattery = hasDevices ? minBattery : -1;
                 root.lowestBatteryCharging = hasDevices ? minBatteryCharging : false;
+                root.hasUnchargedLowBattery = unchargedLow;
                 root.errorMessage = "";
                 
                 // Format update time
@@ -462,14 +468,22 @@ PlasmoidItem {
         executable.connectSource(soundCmd);
     }
     
-    onLowestBatteryChanged: {
-        if (root.lowestBattery >= 0 && root.lowestBattery < 20) {
-            if (!root.lowBatteryAlertPlayed) {
-                playWarningSound();
-                root.lowBatteryAlertPlayed = true;
-            }
+    onHasUnchargedLowBatteryChanged: {
+        if (root.hasUnchargedLowBattery) {
+            playWarningSound();
+            alertRepeatTimer.restart();
         } else {
-            root.lowBatteryAlertPlayed = false;
+            alertRepeatTimer.stop();
+        }
+    }
+    
+    Timer {
+        id: alertRepeatTimer
+        interval: root.alertRepeatInterval
+        running: root.hasUnchargedLowBattery
+        repeat: true
+        onTriggered: {
+            playWarningSound();
         }
     }
 }
