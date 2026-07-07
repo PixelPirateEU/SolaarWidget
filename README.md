@@ -17,7 +17,8 @@ The Solaar Battery Widget allows you to monitor the battery levels of your Logit
 #### Key Features:
 - **Smart Taskbar Icon**: The widget icon in the taskbar always displays a battery icon representing the device with the **lowest battery level**.
 - **Visual Warning**: If any device's battery capacity drops below **20%**, the taskbar icon automatically turns **red**.
-- **Audio Warning**: When a device drops below 20%, a subtle warning sound is played once. This ensures you are notified even during intense gaming sessions or when in full-screen mode.
+- **Audio Warning**: When a device drops below **20%** (and is not charging), a warning sound (`battery-low.oga` from the KDE Ocean theme, with a fallback to `dialog-warning`) is played immediately and repeated every **5 minutes** until the device is plugged in to recharge or the battery level is above 20%.
+- **Fully Charged Notification**: When a device reaches **100%** while charging, a success sound (`battery-full.oga` from the KDE Ocean theme) is played once so you know you can unplug it.
 - **Detailed Overview**: Clicking the widget opens a popup window showing a list of all connected devices, their current battery status (including charging state), and a progress bar.
 
 ### Prerequisites
@@ -54,7 +55,8 @@ Das Solaar Battery Widget ermöglicht es dir, die Akkustände deiner Logitech-Ge
 #### Hauptfunktionen:
 - **Intelligentes Taskleisten-Symbol**: Das Widget-Symbol in der Taskleiste zeigt immer ein Akkusymbol an, das sich grafisch nach dem Gerät mit dem **niedrigsten Akkustand** richtet.
 - **Optische Warnung**: Sobald eines der Geräte unter **20 % Akkukapazität** fällt, färbt sich das Symbol in der Taskleiste automatisch **rot**.
-- **Akustische Warnung**: Fällt ein Gerät unter 20 %, wird einmalig ein dezenter Warnton abgespielt. So wirst du auch während einer intensiven Gaming-Session oder im Vollbildmodus rechtzeitig gewarnt.
+- **Akustische Warnung**: Fällt ein Gerät unter **20 % Akkukapazität** (und wird nicht geladen), wird sofort ein Warnton (`battery-low.oga` aus dem KDE Ocean-Theme, mit Fallback auf `dialog-warning`) abgespielt und alle **5 Minuten** wiederholt, bis das Gerät geladen wird oder der Akkustand wieder über 20 % liegt.
+- **Vollständig geladen Benachrichtigung**: Erreicht ein Gerät beim Laden **100 %**, wird einmalig ein Hinweiston (`battery-full.oga` aus dem KDE Ocean-Theme) abgespielt, damit du weißt, dass du das Ladekabel abziehen kannst.
 - **Detaillierte Übersicht**: Ein Klick auf das Widget öffnet ein Pop-up-Fenster mit einer Liste aller verbundenen Geräte, deren aktuellem Akkustand (inklusive Lade-Status) sowie einem Fortschrittsbalken.
 
 ### Voraussetzungen
