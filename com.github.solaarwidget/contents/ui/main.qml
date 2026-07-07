@@ -464,7 +464,7 @@ PlasmoidItem {
     }
     
     function playWarningSound() {
-        let soundCmd = "canberra-gtk-play -i dialog-warning || pw-play /usr/share/sounds/freedesktop/stereo/dialog-warning.oga || paplay /usr/share/sounds/freedesktop/stereo/dialog-warning.oga";
+        let soundCmd = "pw-play /usr/share/sounds/ocean/stereo/battery-low.oga || paplay /usr/share/sounds/ocean/stereo/battery-low.oga || canberra-gtk-play -f /usr/share/sounds/ocean/stereo/battery-low.oga || canberra-gtk-play -i dialog-warning || pw-play /usr/share/sounds/freedesktop/stereo/dialog-warning.oga || paplay /usr/share/sounds/freedesktop/stereo/dialog-warning.oga";
         executable.connectSource(soundCmd);
     }
     
